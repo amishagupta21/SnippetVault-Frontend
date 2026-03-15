@@ -28,7 +28,7 @@ export default function CreateSnippetModal({
 }:any) {
 
  return (
-<div className="max-w-7xl">
+
 
 
   <Dialog open={open} onOpenChange={setOpen} >
@@ -137,7 +137,7 @@ export default function CreateSnippetModal({
 
   </Dialog>
 
-  </div>
+
 
  )
 }

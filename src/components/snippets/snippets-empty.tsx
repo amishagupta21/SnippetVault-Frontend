@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Plus, Sparkles, Zap, Cloud, Users } from "lucide-react"
 
-export default function SnippetsEmpty() {
+export default function SnippetsEmpty({ onCreate }: any) {
 
   return (
 
@@ -41,23 +41,20 @@ export default function SnippetsEmpty() {
 
       <div className="flex gap-4">
 
-        <Button className="bg-indigo-600 hover:bg-indigo-700 gap-2 px-6 py-5">
-
+        <Button
+          className="bg-indigo-600 hover:bg-indigo-700 gap-2 px-6 py-5"
+          onClick={onCreate}
+        >
           <Plus size={18} />
-
           Create your first snippet
-
         </Button>
 
         <Button
           variant="secondary"
           className="gap-2 bg-[#111827] border border-[#1E293B]"
         >
-
           <Sparkles size={18} />
-
           Import examples
-
         </Button>
 
       </div>
@@ -66,28 +63,15 @@ export default function SnippetsEmpty() {
 
       <div className="grid grid-cols-3 gap-16 pt-10 text-sm text-gray-400">
 
-        <Feature
-          icon={<Zap />}
-          title="Quick Access"
-          desc="Save hours by reusing code patterns instantly."
-        />
+        <Feature icon={<Zap />} title="Quick Access" desc="Save hours by reusing code patterns instantly." />
 
-        <Feature
-          icon={<Cloud />}
-          title="Cloud Sync"
-          desc="Your snippets are available on all your devices."
-        />
+        <Feature icon={<Cloud />} title="Cloud Sync" desc="Your snippets are available on all your devices." />
 
-        <Feature
-          icon={<Users />}
-          title="Team Sharing"
-          desc="Easily share collections with your teammates."
-        />
+        <Feature icon={<Users />} title="Team Sharing" desc="Easily share collections with your teammates." />
 
       </div>
 
     </div>
-
   )
 }
 
