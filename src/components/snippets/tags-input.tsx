@@ -1,24 +1,32 @@
 "use client"
 
-import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { X } from "lucide-react"
+import { useState } from "react"
 
-export default function TagsInput(){
+type TagsInputProps = {
+ tags: string[]
+ setTags: React.Dispatch<React.SetStateAction<string[]>>
+}
 
- const [tags,setTags] = useState(["Frontend","UI","React"])
+export default function TagsInput({ tags, setTags }: TagsInputProps){
+
  const [input,setInput] = useState("")
 
- const addTag=(e:any)=>{
+ const addTag = (e:any)=>{
 
-  if(e.key==="Enter" && input){
+  if(e.key === "Enter" && input){
+
+   e.preventDefault()
+
    setTags([...tags,input])
+
    setInput("")
   }
 
  }
 
- const removeTag=(tag:string)=>{
+ const removeTag = (tag:string)=>{
   setTags(tags.filter(t=>t!==tag))
  }
 

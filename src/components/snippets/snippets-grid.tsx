@@ -5,55 +5,22 @@ import NewSnippetCard from "./new-snippet-card"
 import SnippetCard from "./snippet-card"
 import CreateSnippetModal from "./create-snippet-modal"
 
+export default function SnippetsGrid({ snippets }: any){
 
-
-export default function SnippetsGrid(){
-
-   const [open,setOpen] = useState(false)
-
-  const snippets = [
-    {
-      title:"fetch-api-wrapper",
-      language:"JS",
-      code:`async function fetcher(url) {
- const res = await fetch(url)
- if (!res.ok) throw new Error()
- return res.json()
-}`
-    },
-    {
-      title:"flask-cors-config",
-      language:"PYTHON",
-      code:`from flask_cors import CORS
-app = Flask(__name__)
-CORS(app)`
-    },
-    {
-      title:"tailwind-btn-styles",
-      language:"CSS",
-      code:`.btn-primary{
- @apply bg-primary text-white
- px-4 py-2 rounded-lg
-}`
-    },
-    {
-      title:"rust-error-handler",
-      language:"RUST",
-      code:`type Result<T> =
- std::result::Result<T>
-`
-    }
-  ]
+  const [open,setOpen] = useState(false)
 
   return (
-   <>
+
+    <>
       <div className="grid grid-cols-3 gap-6">
 
-        {snippets.map(snippet => (
+        {snippets.map((snippet:any) => (
+
           <SnippetCard
-            key={snippet.title}
+            key={snippet.id}
             snippet={snippet}
           />
+
         ))}
 
         <NewSnippetCard onClick={()=>setOpen(true)}/>

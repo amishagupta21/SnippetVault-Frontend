@@ -1,5 +1,7 @@
 "use client"
 
+import { useState } from "react"
+
 import {
  Dialog,
  DialogContent,
@@ -17,19 +19,65 @@ import {
  SelectTrigger,
  SelectValue
 } from "@/components/ui/select"
+
 import TagsInput from "./tags-input"
 import CodeEditor from "./code-editor"
-
-
 
 export default function CreateSnippetModal({
  open,
  setOpen
-}:any) {
+}: any) {
+
+ const [title,setTitle] = useState("")
+ const [language,setLanguage] = useState("")
+ const [tags,setTags] = useState<string[]>([])
+ const [code,setCode] = useState("")
+ const [loading,setLoading] = useState(false)
+
+ async function handleCreateSnippet(){
+
+  try{
+
+   setLoading(true)
+
+   const res = await fetch("http://localhost:8000/api/snippets/",{
+    method:"POST",
+    headers:{
+     "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+     title:title,
+     programming_language:language,
+     tags:tags.join(","),
+     code_snippets:code
+    })
+   })
+
+   if(!res.ok){
+    throw new Error("Failed to create snippet")
+   }
+
+   await res.json()
+
+   // reset form
+   setTitle("")
+   setLanguage("")
+   setTags([])
+   setCode("")
+
+   // close modal
+   setOpen(false)
+
+  }catch(error){
+   console.error("Create snippet error:",error)
+  }
+  finally{
+   setLoading(false)
+  }
+
+ }
 
  return (
-
-
 
   <Dialog open={open} onOpenChange={setOpen} >
 
@@ -60,6 +108,8 @@ export default function CreateSnippetModal({
           </label>
 
           <Input
+           value={title}
+           onChange={(e)=>setTitle(e.target.value)}
            placeholder="e.g. React Navbar Component"
            className="mt-2 bg-[#020617]"
           />
@@ -72,7 +122,7 @@ export default function CreateSnippetModal({
             Programming Language
           </label>
 
-          <Select>
+          <Select onValueChange={(value)=>setLanguage(value)}>
 
            <SelectTrigger className="mt-2 bg-[#020617]">
             <SelectValue placeholder="Select language"/>
@@ -106,11 +156,17 @@ export default function CreateSnippetModal({
 
       {/* Tags */}
 
-      <TagsInput />
+      <TagsInput
+       tags={tags}
+       setTags={setTags}
+      />
 
       {/* Code Editor */}
 
-      <CodeEditor />
+      <CodeEditor
+       code={code}
+       setCode={setCode}
+      />
 
       {/* Footer */}
 
@@ -123,9 +179,13 @@ export default function CreateSnippetModal({
          Cancel
         </Button>
 
-        <Button className="bg-indigo-600 hover:bg-indigo-700">
+        <Button
+         className="bg-indigo-600 hover:bg-indigo-700"
+         onClick={handleCreateSnippet}
+         disabled={loading}
+        >
 
-         Save Snippet
+         {loading ? "Saving..." : "Save Snippet"}
 
         </Button>
 
@@ -136,8 +196,6 @@ export default function CreateSnippetModal({
    </DialogContent>
 
   </Dialog>
-
-
 
  )
 }

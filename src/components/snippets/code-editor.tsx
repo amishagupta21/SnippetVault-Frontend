@@ -2,7 +2,12 @@
 
 import Editor from "@monaco-editor/react"
 
-export default function CodeEditor(){
+type CodeEditorProps = {
+ code: string
+ setCode: React.Dispatch<React.SetStateAction<string>>
+}
+
+export default function CodeEditor({ code, setCode }: CodeEditorProps){
 
  return(
 
@@ -20,13 +25,10 @@ export default function CodeEditor(){
 
     <Editor
      height="300px"
-     defaultLanguage="javascript"
-     defaultValue={`// Paste your code here...
-
-function initialize() {
- console.log('SnippetVault Ready')
-}`}
+     language="javascript"
+     value={code}
      theme="vs-dark"
+     onChange={(value)=>setCode(value || "")}
     />
 
    </div>
