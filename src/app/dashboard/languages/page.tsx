@@ -3,7 +3,21 @@ import Topbar from "@/components/dashboard/topbar"
 import LanguagesTable from "@/components/languages/languages-table"
 import AddLanguageButton from "@/components/languages/add-language-button"
 
-export default function LanguagesPage() {
+async function getLanguages() {
+  const res = await fetch("http://localhost:8000/api/language/", {
+    cache: "no-store", // 🔥 important for fresh data
+  })
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch languages")
+  }
+
+  return res.json()
+}
+
+export default async function LanguagesPage() {
+
+  const languages = await getLanguages()
 
   return (
 
@@ -33,7 +47,8 @@ export default function LanguagesPage() {
 
           </div>
 
-          <LanguagesTable />
+          {/* ✅ PASS DATA */}
+          <LanguagesTable languages={languages} />
 
         </main>
 

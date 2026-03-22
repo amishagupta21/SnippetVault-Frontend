@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 import {
  Dialog,
@@ -30,9 +30,25 @@ export default function CreateSnippetModal({
 
  const [title,setTitle] = useState("")
  const [language,setLanguage] = useState("")
+ const [languages,setLanguages] = useState<any[]>([]) // ✅ ADD THIS
  const [tags,setTags] = useState<string[]>([])
  const [code,setCode] = useState("")
  const [loading,setLoading] = useState(false)
+
+ // ✅ FETCH LANGUAGES
+ useEffect(() => {
+  const fetchLanguages = async () => {
+   try {
+    const res = await fetch("http://127.0.0.1:8000/api/language/")
+    const data = await res.json()
+    setLanguages(data)
+   } catch (err) {
+    console.error("Error fetching languages", err)
+   }
+  }
+
+  fetchLanguages()
+ }, [])
 
  async function handleCreateSnippet(){
 
@@ -47,7 +63,7 @@ export default function CreateSnippetModal({
     },
     body:JSON.stringify({
      title:title,
-     programming_language:language,
+     programming_language:Number(language), // ✅ FIXED
      tags:tags.join(","),
      code_snippets:code
     })
@@ -59,13 +75,10 @@ export default function CreateSnippetModal({
 
    await res.json()
 
-   // reset form
    setTitle("")
    setLanguage("")
    setTags([])
    setCode("")
-
-   // close modal
    setOpen(false)
 
   }catch(error){
@@ -97,12 +110,9 @@ export default function CreateSnippetModal({
 
     <div className="space-y-6">
 
-      {/* Row */}
-
       <div className="grid grid-cols-2 gap-6">
 
         <div>
-
           <label className="text-sm text-gray-300">
             Snippet Title
           </label>
@@ -113,11 +123,9 @@ export default function CreateSnippetModal({
            placeholder="e.g. React Navbar Component"
            className="mt-2 bg-[#020617]"
           />
-
         </div>
 
         <div>
-
           <label className="text-sm text-gray-300">
             Programming Language
           </label>
@@ -128,24 +136,13 @@ export default function CreateSnippetModal({
             <SelectValue placeholder="Select language"/>
            </SelectTrigger>
 
+           {/* ✅ FIXED STRUCTURE */}
            <SelectContent>
-
-            <SelectItem value="javascript">
-             JavaScript
-            </SelectItem>
-
-            <SelectItem value="typescript">
-             TypeScript
-            </SelectItem>
-
-            <SelectItem value="python">
-             Python
-            </SelectItem>
-
-            <SelectItem value="rust">
-             Rust
-            </SelectItem>
-
+            {languages.map((lang: any) => (
+              <SelectItem key={lang.id} value={String(lang.id)}>
+                {lang.language_name}
+              </SelectItem>
+            ))}
            </SelectContent>
 
           </Select>
@@ -154,28 +151,13 @@ export default function CreateSnippetModal({
 
       </div>
 
-      {/* Tags */}
+      <TagsInput tags={tags} setTags={setTags} />
 
-      <TagsInput
-       tags={tags}
-       setTags={setTags}
-      />
-
-      {/* Code Editor */}
-
-      <CodeEditor
-       code={code}
-       setCode={setCode}
-      />
-
-      {/* Footer */}
+      <CodeEditor code={code} setCode={setCode} />
 
       <div className="flex justify-end gap-4 pt-4 border-t border-[#1E293B]">
 
-        <Button
-         variant="ghost"
-         onClick={()=>setOpen(false)}
-        >
+        <Button variant="ghost" onClick={()=>setOpen(false)}>
          Cancel
         </Button>
 
@@ -184,9 +166,7 @@ export default function CreateSnippetModal({
          onClick={handleCreateSnippet}
          disabled={loading}
         >
-
          {loading ? "Saving..." : "Save Snippet"}
-
         </Button>
 
       </div>
