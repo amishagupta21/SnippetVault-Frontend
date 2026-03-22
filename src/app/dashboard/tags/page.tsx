@@ -4,12 +4,29 @@ import CreateTag from "@/components/tags/create-tag"
 import QuickActions from "@/components/tags/quick-actions"
 import TagsList from "@/components/tags/tags-list"
 
+async function getTags() {
+  const res = await fetch("http://localhost:8000/api/tags/", {
+    cache: "no-store",
+  })
 
+  if (!res.ok) {
+    throw new Error("Failed to fetch tags")
+  }
 
-export default function TagsPage() {
+  return res.json()
+}
+
+export default async function TagsPage({ searchParams }: any) {
+
+  const search = searchParams?.q?.toLowerCase() || ""
+
+  const tags = await getTags()
+
+  const filteredTags = tags.filter((tag: any) =>
+    tag.tag_name.toLowerCase().includes(search)
+  )
 
   return (
-
     <div className="flex min-h-screen bg-[#0B1020] text-white">
 
       <Sidebar />
@@ -20,21 +37,14 @@ export default function TagsPage() {
 
         <main className="p-8 space-y-8">
 
-          {/* Page Title */}
-
           <div>
-            <h1 className="text-3xl font-bold">
-              Tags Management
-            </h1>
-
-            <p className="text-gray-400">
-              Organize and categorize your developer workflow with custom labels.
-            </p>
+            <h1 className="text-3xl font-bold">Tags Management</h1>
           </div>
 
-          <CreateTag />
+          {/* 🔥 pass current search */}
+          <CreateTag defaultQuery={search} />
 
-          <TagsList />
+          <TagsList tags={filteredTags} />
 
           <QuickActions />
 
